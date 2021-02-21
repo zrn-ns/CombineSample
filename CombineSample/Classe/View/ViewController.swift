@@ -28,19 +28,29 @@ class ViewController: UIViewController {
         didSet {
             collectionView.delegate = self
             collectionView.dataSource = self
+            collectionView.refreshControl = refreshControl
             collectionView.register(UINib(nibName: NewsCellClassName, bundle: nil), forCellWithReuseIdentifier: NewsCellIdentifier)
         }
     }
 
     private var cancellables: Set<AnyCancellable> = []
+    private lazy var refreshControl: UIRefreshControl = {
+        let control = UIRefreshControl()
+        control.addTarget(viewModel, action: #selector(ViewModel.pulledDownRefreshControl), for: .valueChanged)
+        return control
+    }()
 
     private func setupSubscription() {
         viewModel.$newsList.removeDuplicates().sink { [weak self] _ in
             self?.collectionView.reloadData()
         }.store(in: &cancellables)
 
-        viewModel.$isLoading.removeDuplicates().sink { isLoading in
+        viewModel.$isLoading.removeDuplicates().sink { [weak self] isLoading in
             UIApplication.shared.isNetworkActivityIndicatorVisible = isLoading
+
+            if !isLoading {
+                self?.refreshControl.endRefreshing()
+            }
         }.store(in: &cancellables)
     }
 }

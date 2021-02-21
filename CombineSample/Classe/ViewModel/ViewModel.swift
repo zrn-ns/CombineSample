@@ -21,6 +21,12 @@ final class ViewModel {
         fetchNewsFromServer()
     }
 
+    @objc func pulledDownRefreshControl() {
+        newsList = []
+        paging = nil
+        fetchNewsFromServer()
+    }
+
     private var router: Router?
     private var cancellables: Set<AnyCancellable> = []
 
