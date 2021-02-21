@@ -76,4 +76,9 @@ extension ViewController: UICollectionViewDataSource {
         cell.set(.init(news: news))
         return cell
     }
+
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let news = viewModel.newsList[indexPath.row]
+        viewModel.willDisplayNews(news)
+    }
 }

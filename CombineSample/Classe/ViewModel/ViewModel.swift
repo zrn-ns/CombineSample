@@ -21,6 +21,12 @@ final class ViewModel {
         fetchNewsFromServer()
     }
 
+    func willDisplayNews(_ news: News) {
+        if newsList.count - newsList.lastIndex(of: news)! < 5 {
+            fetchNewsFromServer()
+        }
+    }
+
     @objc func pulledDownRefreshControl() {
         newsList = []
         paging = nil
@@ -31,6 +37,7 @@ final class ViewModel {
     private var cancellables: Set<AnyCancellable> = []
 
     private func fetchNewsFromServer() {
+        guard !isLoading else { return }
         isLoading = true
         NewsRepository.fetchDataFromServer(paging: paging).sink { [weak self] completion in
             guard let _self = self else { return }
