@@ -37,8 +37,8 @@ final class ViewModel {
     }
 
     @objc func pulledDownRefreshControl() {
-        newsList = []
         paging = nil
+        newsList = []
         fetchNewsFromServer()
     }
 
