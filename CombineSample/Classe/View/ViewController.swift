@@ -26,7 +26,9 @@ class ViewController: UIViewController {
         case paging
     }
 
-    var viewModel: ViewModel = .init()
+    let viewModel: ViewModel = .init()
+
+    // MARK: - lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,7 +37,7 @@ class ViewController: UIViewController {
         setupSubscription()
     }
 
-    // MARK: - private
+    // MARK: - outlet
 
     @IBOutlet private weak var collectionView: UICollectionView! {
         didSet {
@@ -48,6 +50,8 @@ class ViewController: UIViewController {
         }
     }
 
+    // MARK: - private
+
     private var cancellables: Set<AnyCancellable> = []
 
     private lazy var refreshControl: UIRefreshControl = {
@@ -56,27 +60,55 @@ class ViewController: UIViewController {
         return control
     }()
 
-    private lazy var collectionViewDataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) { [weak self] (collectionView: UICollectionView, indexPath: IndexPath, item: Item) -> UICollectionViewCell? in
-        guard let _self = self else { return nil }
-
+    private lazy var collectionViewDataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: Item) -> UICollectionViewCell? in
         switch item {
         case .news(let news):
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewsCellIdentifier, for: indexPath) as? NewsCollectionViewCell else {
-                fatalError("セルの取得に失敗しました")
-            }
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewsCellIdentifier, for: indexPath) as! NewsCollectionViewCell
             cell.set(.init(news: news))
             return cell
 
         case .paging:
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PagingCellIdentifier, for: indexPath) as? PagingCollectionViewCell else {
-                fatalError("セルの取得に失敗しました")
-            }
-
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PagingCellIdentifier, for: indexPath) as! PagingCollectionViewCell
             cell.startAnimating()
             return cell
         }
     }
 
+    /// イベントの購読の登録を行う
+    private func setupSubscription() {
+        // ニュース一覧
+        viewModel.$newsList.removeDuplicates().sink { [weak self] _ in
+            self?.updateDataSource()
+        }.store(in: &cancellables)
+
+        // ページングセル
+        viewModel.$needsToShowPagingCell.removeDuplicates().sink { [weak self] _ in
+            self?.updateDataSource()
+        }.store(in: &cancellables)
+
+        // ロード中表示
+        viewModel.$isLoading.removeDuplicates().sink { [weak self] isLoading in
+            UIApplication.shared.isNetworkActivityIndicatorVisible = isLoading
+
+            if !isLoading {
+                self?.refreshControl.endRefreshing()
+            }
+        }.store(in: &cancellables)
+    }
+
+    /// CollectionViewのLayoutを作成する
+    private static func createLayout(collectionViewWidth: CGFloat) -> UICollectionViewLayout {
+        UICollectionViewCompositionalLayout { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                  heightDimension: .estimated(50))
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
+            let section = NSCollectionLayoutSection(group: group)
+            return section
+        }
+    }
+
+    /// CollectionViewのデータソースを更新する
     private func updateDataSource() {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.news])
@@ -88,35 +120,6 @@ class ViewController: UIViewController {
         }
 
         collectionViewDataSource.apply(snapshot, animatingDifferences: true)
-    }
-
-    private func setupSubscription() {
-        viewModel.$newsList.removeDuplicates().sink { [weak self] _ in
-            self?.updateDataSource()
-        }.store(in: &cancellables)
-
-        viewModel.$isLoading.removeDuplicates().sink { [weak self] isLoading in
-            UIApplication.shared.isNetworkActivityIndicatorVisible = isLoading
-
-            if !isLoading {
-                self?.refreshControl.endRefreshing()
-            }
-        }.store(in: &cancellables)
-
-        viewModel.$needsToShowPagingCell.removeDuplicates().sink { [weak self] _ in
-            self?.updateDataSource()
-        }.store(in: &cancellables)
-    }
-
-    private static func createLayout(collectionViewWidth: CGFloat) -> UICollectionViewLayout {
-        UICollectionViewCompositionalLayout { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                                  heightDimension: .estimated(50))
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
-            let section = NSCollectionLayoutSection(group: group)
-            return section
-        }
     }
 }
 
