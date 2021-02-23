@@ -115,10 +115,8 @@
 		74DC47F825E25D6C0080097F /* View */ = {
 			isa = PBXGroup;
 			children = (
-				74068EAC25E264B800AB6203 /* PagingCollectionViewCell.swift */,
+				74FBD39C25E50E4D00BB0E8D /* CollectionViewCell */,
 				74DC47CB25E221A60080097F /* Main.storyboard */,
-				74DC47E825E2459D0080097F /* NewsCollectionViewCell.swift */,
-				74DC47E525E245880080097F /* NewsCollectionViewCell.xib */,
 				74DC47C925E221A60080097F /* ViewController.swift */,
 			);
 			path = View;
@@ -162,6 +160,16 @@
 				74FBD39925E50D8700BB0E8D /* NSLayoutConstraint+Extensions.swift */,
 			);
 			path = Extension;
+			sourceTree = "<group>";
+		};
+		74FBD39C25E50E4D00BB0E8D /* CollectionViewCell */ = {
+			isa = PBXGroup;
+			children = (
+				74068EAC25E264B800AB6203 /* PagingCollectionViewCell.swift */,
+				74DC47E825E2459D0080097F /* NewsCollectionViewCell.swift */,
+				74DC47E525E245880080097F /* NewsCollectionViewCell.xib */,
+			);
+			path = CollectionViewCell;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
