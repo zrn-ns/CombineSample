@@ -110,16 +110,8 @@ class ViewController: UIViewController {
 
     private static func createLayout(collectionViewWidth: CGFloat) -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            let cellWidth = collectionViewWidth
-            let cellHeight: CGFloat = {
-                switch Section.allCases[sectionIndex] {
-                case .news: return NewsCollectionViewCell.calculateHeight(for: cellWidth)
-                case .paging: return PagingCollectionViewCell.height
-                }
-            }()
-
-            let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(cellWidth),
-                                                  heightDimension: .absolute(cellHeight))
+            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                  heightDimension: .estimated(50))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
             let section = NSCollectionLayoutSection(group: group)

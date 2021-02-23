@@ -9,8 +9,6 @@ import UIKit
 
 final class PagingCollectionViewCell: UICollectionViewCell {
 
-    static let height: CGFloat = 70
-
     func startAnimating() {
         activityIndicator.startAnimating()
     }
@@ -32,10 +30,11 @@ final class PagingCollectionViewCell: UICollectionViewCell {
         self.addSubview(activityIndicator)
         addConstraints([
             centerXAnchor.constraint(equalTo: activityIndicator.centerXAnchor),
-            centerYAnchor.constraint(equalTo: activityIndicator.centerYAnchor)
+            centerYAnchor.constraint(equalTo: activityIndicator.centerYAnchor),
+            heightAnchor.constraint(equalToConstant: 70).withPriority(.defaultLow)
         ])
+
     }
 
     private let activityIndicator = UIActivityIndicatorView(style: .medium)
 }
-

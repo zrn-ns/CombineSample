@@ -28,14 +28,6 @@ final class NewsCollectionViewCell: UICollectionViewCell {
         }
     }
 
-    static func calculateHeight(for width: CGFloat) -> CGFloat {
-        let prototypingCell = UINib(nibName: String(describing: Self.self), bundle: nil).instantiate(withOwner: nil, options: nil).first as! Self
-        return prototypingCell.contentView
-            .systemLayoutSizeFitting(CGSize(width: width, height: .zero),
-                                     withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
-            .height
-    }
-
     func set(_ viewModel: ViewModel) {
         self.headlineLabel.text = viewModel.headline
         self.captionLabel.text = viewModel.caption
