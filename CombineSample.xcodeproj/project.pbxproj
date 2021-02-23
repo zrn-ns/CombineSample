@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		74068EAD25E264B800AB6203 /* PagingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74068EAC25E264B800AB6203 /* PagingCollectionViewCell.swift */; };
 		74DC47C625E221A60080097F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74DC47C525E221A60080097F /* AppDelegate.swift */; };
 		74DC47C825E221A60080097F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74DC47C725E221A60080097F /* SceneDelegate.swift */; };
 		74DC47CA25E221A60080097F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74DC47C925E221A60080097F /* ViewController.swift */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		74068EAC25E264B800AB6203 /* PagingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingCollectionViewCell.swift; sourceTree = "<group>"; };
 		74DC47C225E221A60080097F /* CombineSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CombineSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74DC47C525E221A60080097F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		74DC47C725E221A60080097F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 		74DC47F825E25D6C0080097F /* View */ = {
 			isa = PBXGroup;
 			children = (
+				74068EAC25E264B800AB6203 /* PagingCollectionViewCell.swift */,
 				74DC47CB25E221A60080097F /* Main.storyboard */,
 				74DC47E825E2459D0080097F /* NewsCollectionViewCell.swift */,
 				74DC47E525E245880080097F /* NewsCollectionViewCell.xib */,
@@ -212,6 +215,7 @@
 			files = (
 				74DC47F025E25B110080097F /* Paging.swift in Sources */,
 				74DC47ED25E250150080097F /* Router.swift in Sources */,
+				74068EAD25E264B800AB6203 /* PagingCollectionViewCell.swift in Sources */,
 				74DC47CA25E221A60080097F /* ViewController.swift in Sources */,
 				74DC47F325E25B230080097F /* ApiError.swift in Sources */,
 				74DC47E925E2459D0080097F /* NewsCollectionViewCell.swift in Sources */,

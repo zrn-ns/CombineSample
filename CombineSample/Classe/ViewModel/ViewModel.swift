@@ -11,8 +11,13 @@ import SwiftUI
 
 final class ViewModel {
     @Published var newsList: [News] = []
-    @Published var paging: Paging? = nil
+    @Published var paging: Paging? = nil {
+        didSet {
+            needsToShowPagingCell = paging?.hasNext ?? false
+        }
+    }
     @Published var isLoading: Bool = false
+    @Published var needsToShowPagingCell: Bool = false
 
     func viewDidLoad(vc: UIViewController) {
         router = Router()
@@ -25,6 +30,10 @@ final class ViewModel {
         if newsList.count - newsList.lastIndex(of: news)! < 5 {
             fetchNewsFromServer()
         }
+    }
+
+    func willDisplayPagingCell() {
+        fetchNewsFromServer()
     }
 
     @objc func pulledDownRefreshControl() {

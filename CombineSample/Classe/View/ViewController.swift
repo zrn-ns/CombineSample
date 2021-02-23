@@ -11,7 +11,15 @@ import UIKit
 private let NewsCellClassName = String(describing: NewsCollectionViewCell.self)
 private let NewsCellIdentifier: String = NewsCellClassName
 
+private let PagingCellClassName = String(describing: PagingCollectionViewCell.self)
+private let PagingCellIdentifier = PagingCellClassName
+
 class ViewController: UIViewController {
+
+    enum Sections: Int, CaseIterable {
+        case news
+        case paging
+    }
 
     var viewModel: ViewModel = .init()
 
@@ -30,6 +38,7 @@ class ViewController: UIViewController {
             collectionView.dataSource = self
             collectionView.refreshControl = refreshControl
             collectionView.register(UINib(nibName: NewsCellClassName, bundle: nil), forCellWithReuseIdentifier: NewsCellIdentifier)
+            collectionView.register(PagingCollectionViewCell.self, forCellWithReuseIdentifier: PagingCellIdentifier)
         }
     }
 
@@ -52,33 +61,72 @@ class ViewController: UIViewController {
                 self?.refreshControl.endRefreshing()
             }
         }.store(in: &cancellables)
+
+        viewModel.$needsToShowPagingCell.removeDuplicates().sink { [weak self] _ in
+            self?.collectionView.reloadData()
+        }.store(in: &cancellables)
     }
 }
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width
-        return CGSize(width: width,
-                      height: NewsCollectionViewCell.calculateHeight(for: width))
+        switch Sections.allCases[indexPath.section] {
+        case .news:
+            let width = collectionView.bounds.width
+            return CGSize(width: width,
+                          height: NewsCollectionViewCell.calculateHeight(for: width))
+
+        case .paging:
+            let width = collectionView.bounds.width
+            return CGSize(width: width,
+                          height: PagingCollectionViewCell.height)
+        }
     }
 }
 
 extension ViewController: UICollectionViewDataSource {
+
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        Sections.allCases.count
+    }
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        viewModel.newsList.count
+        switch Sections.allCases[section] {
+        case .news:
+            return viewModel.newsList.count
+        case .paging:
+            return viewModel.needsToShowPagingCell ? 1 : 0
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewsCellIdentifier, for: indexPath) as? NewsCollectionViewCell else {
-            fatalError("セルの取得に失敗しました")
+        switch Sections.allCases[indexPath.section] {
+        case .news:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewsCellIdentifier, for: indexPath) as? NewsCollectionViewCell else {
+                fatalError("セルの取得に失敗しました")
+            }
+            let news = viewModel.newsList[indexPath.row]
+            cell.set(.init(news: news))
+            return cell
+
+        case .paging:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PagingCellIdentifier, for: indexPath) as? PagingCollectionViewCell else {
+                fatalError("セルの取得に失敗しました")
+            }
+
+            cell.startAnimating()
+            return cell
         }
-        let news = viewModel.newsList[indexPath.row]
-        cell.set(.init(news: news))
-        return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let news = viewModel.newsList[indexPath.row]
-        viewModel.willDisplayNews(news)
+        switch Sections.allCases[indexPath.section] {
+        case .news:
+            let news = viewModel.newsList[indexPath.row]
+            viewModel.willDisplayNews(news)
+
+        case .paging:
+            viewModel.willDisplayPagingCell()
+        }
     }
 }
