@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct News: Equatable {
+struct News: Equatable, Hashable {
     var headline: String
     var caption: String
     var publishedAt: Date

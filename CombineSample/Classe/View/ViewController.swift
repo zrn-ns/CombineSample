@@ -21,6 +21,11 @@ class ViewController: UIViewController {
         case paging
     }
 
+    enum Item: Hashable {
+        case news(news: News)
+        case paging
+    }
+
     var viewModel: ViewModel = .init()
 
     override func viewDidLoad() {
@@ -35,7 +40,9 @@ class ViewController: UIViewController {
     @IBOutlet private weak var collectionView: UICollectionView! {
         didSet {
             collectionView.delegate = self
-            collectionView.dataSource = self
+            collectionView.dataSource = collectionViewDataSource
+            #warning("あとでCompositionalLayoutに書き直したときに消せるはず")
+            (collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = CGSize(width: UIScreen.main.bounds.width, height: 100)
             collectionView.refreshControl = refreshControl
             collectionView.register(UINib(nibName: NewsCellClassName, bundle: nil), forCellWithReuseIdentifier: NewsCellIdentifier)
             collectionView.register(PagingCollectionViewCell.self, forCellWithReuseIdentifier: PagingCellIdentifier)
@@ -43,69 +50,21 @@ class ViewController: UIViewController {
     }
 
     private var cancellables: Set<AnyCancellable> = []
+
     private lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
         control.addTarget(viewModel, action: #selector(ViewModel.pulledDownRefreshControl), for: .valueChanged)
         return control
     }()
 
-    private func setupSubscription() {
-        viewModel.$newsList.removeDuplicates().sink { [weak self] _ in
-            self?.collectionView.reloadData()
-        }.store(in: &cancellables)
+    private lazy var collectionViewDataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) { [weak self] (collectionView: UICollectionView, indexPath: IndexPath, item: Item) -> UICollectionViewCell? in
+        guard let _self = self else { return nil }
 
-        viewModel.$isLoading.removeDuplicates().sink { [weak self] isLoading in
-            UIApplication.shared.isNetworkActivityIndicatorVisible = isLoading
-
-            if !isLoading {
-                self?.refreshControl.endRefreshing()
-            }
-        }.store(in: &cancellables)
-
-        viewModel.$needsToShowPagingCell.removeDuplicates().sink { [weak self] _ in
-            self?.collectionView.reloadData()
-        }.store(in: &cancellables)
-    }
-}
-
-extension ViewController: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        switch Section.allCases[indexPath.section] {
-        case .news:
-            let width = collectionView.bounds.width
-            return CGSize(width: width,
-                          height: NewsCollectionViewCell.calculateHeight(for: width))
-
-        case .paging:
-            let width = collectionView.bounds.width
-            return CGSize(width: width,
-                          height: PagingCollectionViewCell.height)
-        }
-    }
-}
-
-extension ViewController: UICollectionViewDataSource {
-
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        Section.allCases.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch Section.allCases[section] {
-        case .news:
-            return viewModel.newsList.count
-        case .paging:
-            return viewModel.needsToShowPagingCell ? 1 : 0
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        switch Section.allCases[indexPath.section] {
-        case .news:
+        switch item {
+        case .news(let news):
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewsCellIdentifier, for: indexPath) as? NewsCollectionViewCell else {
                 fatalError("セルの取得に失敗しました")
             }
-            let news = viewModel.newsList[indexPath.row]
             cell.set(.init(news: news))
             return cell
 
@@ -119,10 +78,62 @@ extension ViewController: UICollectionViewDataSource {
         }
     }
 
+    private func updateDataSource() {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+        snapshot.appendSections([.news])
+        snapshot.appendItems(viewModel.newsList.map({ .news(news: $0) }), toSection: .news)
+
+        if viewModel.needsToShowPagingCell {
+            snapshot.appendSections([.paging])
+            snapshot.appendItems([.paging], toSection: .paging)
+        }
+
+        collectionViewDataSource.apply(snapshot, animatingDifferences: true)
+    }
+
+    private func setupSubscription() {
+        viewModel.$newsList.removeDuplicates().sink { [weak self] _ in
+            self?.updateDataSource()
+        }.store(in: &cancellables)
+
+        viewModel.$isLoading.removeDuplicates().sink { [weak self] isLoading in
+            UIApplication.shared.isNetworkActivityIndicatorVisible = isLoading
+
+            if !isLoading {
+                self?.refreshControl.endRefreshing()
+            }
+        }.store(in: &cancellables)
+
+        viewModel.$needsToShowPagingCell.removeDuplicates().sink { [weak self] _ in
+            self?.updateDataSource()
+        }.store(in: &cancellables)
+    }
+}
+
+//extension ViewController: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        switch Section.allCases[indexPath.section] {
+//        case .news:
+//            let width = collectionView.bounds.width
+//            return CGSize(width: width,
+//                          height: NewsCollectionViewCell.calculateHeight(for: width))
+//
+//        case .paging:
+//            let width = collectionView.bounds.width
+//            return CGSize(width: width,
+//                          height: PagingCollectionViewCell.height)
+//        }
+//    }
+//}
+
+extension ViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        switch Section.allCases[indexPath.section] {
-        case .news:
-            let news = viewModel.newsList[indexPath.row]
+        guard let item = (collectionView.dataSource as? UICollectionViewDiffableDataSource<Section, Item>)?.itemIdentifier(for: indexPath) else {
+            fatalError("不正な状態")
+        }
+
+        switch item {
+        case .news(let news):
             viewModel.willDisplayNews(news)
 
         case .paging:
