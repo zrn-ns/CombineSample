@@ -23,6 +23,7 @@
 		74DC47F025E25B110080097F /* Paging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74DC47EF25E25B110080097F /* Paging.swift */; };
 		74DC47F325E25B230080097F /* ApiError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74DC47F225E25B230080097F /* ApiError.swift */; };
 		74FBD39525E5005A00BB0E8D /* DidSetPublished.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FBD39425E5005A00BB0E8D /* DidSetPublished.swift */; };
+		74FBD39A25E50D8700BB0E8D /* NSLayoutConstraint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FBD39925E50D8700BB0E8D /* NSLayoutConstraint+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 		74DC47EF25E25B110080097F /* Paging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paging.swift; sourceTree = "<group>"; };
 		74DC47F225E25B230080097F /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
 		74FBD39425E5005A00BB0E8D /* DidSetPublished.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidSetPublished.swift; sourceTree = "<group>"; };
+		74FBD39925E50D8700BB0E8D /* NSLayoutConstraint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 		74DC47F725E25D5F0080097F /* Classe */ = {
 			isa = PBXGroup;
 			children = (
+				74FBD39825E50D7800BB0E8D /* Extension */,
 				74FBD39325E5004900BB0E8D /* Util */,
 				74DC47FB25E25DE90080097F /* Repository */,
 				74DC47F525E25D4B0080097F /* Model */,
@@ -151,6 +154,14 @@
 				74FBD39425E5005A00BB0E8D /* DidSetPublished.swift */,
 			);
 			path = Util;
+			sourceTree = "<group>";
+		};
+		74FBD39825E50D7800BB0E8D /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				74FBD39925E50D8700BB0E8D /* NSLayoutConstraint+Extensions.swift */,
+			);
+			path = Extension;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -234,6 +245,7 @@
 				74DC47C625E221A60080097F /* AppDelegate.swift in Sources */,
 				74DC47E125E2293B0080097F /* NewsRepository.swift in Sources */,
 				74DC47DB25E221FD0080097F /* ViewModel.swift in Sources */,
+				74FBD39A25E50D8700BB0E8D /* NSLayoutConstraint+Extensions.swift in Sources */,
 				74DC47DE25E222340080097F /* News.swift in Sources */,
 				74DC47C825E221A60080097F /* SceneDelegate.swift in Sources */,
 			);
