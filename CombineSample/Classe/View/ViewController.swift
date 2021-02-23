@@ -41,8 +41,7 @@ class ViewController: UIViewController {
         didSet {
             collectionView.delegate = self
             collectionView.dataSource = collectionViewDataSource
-            #warning("あとでCompositionalLayoutに書き直したときに消せるはず")
-            (collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = CGSize(width: UIScreen.main.bounds.width, height: 100)
+            collectionView.collectionViewLayout = Self.createLayout(collectionViewWidth: collectionView.bounds.width)
             collectionView.refreshControl = refreshControl
             collectionView.register(UINib(nibName: NewsCellClassName, bundle: nil), forCellWithReuseIdentifier: NewsCellIdentifier)
             collectionView.register(PagingCollectionViewCell.self, forCellWithReuseIdentifier: PagingCellIdentifier)
@@ -108,23 +107,26 @@ class ViewController: UIViewController {
             self?.updateDataSource()
         }.store(in: &cancellables)
     }
-}
 
-//extension ViewController: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        switch Section.allCases[indexPath.section] {
-//        case .news:
-//            let width = collectionView.bounds.width
-//            return CGSize(width: width,
-//                          height: NewsCollectionViewCell.calculateHeight(for: width))
-//
-//        case .paging:
-//            let width = collectionView.bounds.width
-//            return CGSize(width: width,
-//                          height: PagingCollectionViewCell.height)
-//        }
-//    }
-//}
+    private static func createLayout(collectionViewWidth: CGFloat) -> UICollectionViewLayout {
+        UICollectionViewCompositionalLayout { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            let cellWidth = collectionViewWidth
+            let cellHeight: CGFloat = {
+                switch Section.allCases[sectionIndex] {
+                case .news: return NewsCollectionViewCell.calculateHeight(for: cellWidth)
+                case .paging: return PagingCollectionViewCell.height
+                }
+            }()
+
+            let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(cellWidth),
+                                                  heightDimension: .absolute(cellHeight))
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
+            let section = NSCollectionLayoutSection(group: group)
+            return section
+        }
+    }
+}
 
 extension ViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
