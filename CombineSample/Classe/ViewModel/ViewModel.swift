@@ -10,14 +10,14 @@ import Foundation
 import SwiftUI
 
 final class ViewModel {
-    @Published var newsList: [News] = []
-    @Published var paging: Paging? = nil {
+    @DidSetPublished var newsList: [News] = []
+    @DidSetPublished var paging: Paging? = nil {
         didSet {
             needsToShowPagingCell = paging?.hasNext ?? false
         }
     }
-    @Published var isLoading: Bool = false
-    @Published var needsToShowPagingCell: Bool = false
+    @DidSetPublished var isLoading: Bool = false
+    @DidSetPublished var needsToShowPagingCell: Bool = false
 
     func viewDidLoad(vc: UIViewController) {
         router = Router()

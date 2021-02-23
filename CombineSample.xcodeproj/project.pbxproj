@@ -22,6 +22,7 @@
 		74DC47ED25E250150080097F /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74DC47EC25E250150080097F /* Router.swift */; };
 		74DC47F025E25B110080097F /* Paging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74DC47EF25E25B110080097F /* Paging.swift */; };
 		74DC47F325E25B230080097F /* ApiError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74DC47F225E25B230080097F /* ApiError.swift */; };
+		74FBD39525E5005A00BB0E8D /* DidSetPublished.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FBD39425E5005A00BB0E8D /* DidSetPublished.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		74DC47EC25E250150080097F /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		74DC47EF25E25B110080097F /* Paging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paging.swift; sourceTree = "<group>"; };
 		74DC47F225E25B230080097F /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
+		74FBD39425E5005A00BB0E8D /* DidSetPublished.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidSetPublished.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +99,7 @@
 		74DC47F725E25D5F0080097F /* Classe */ = {
 			isa = PBXGroup;
 			children = (
+				74FBD39325E5004900BB0E8D /* Util */,
 				74DC47FB25E25DE90080097F /* Repository */,
 				74DC47F525E25D4B0080097F /* Model */,
 				74DC47FA25E25DC70080097F /* Router */,
@@ -140,6 +143,14 @@
 				74DC47E025E2293B0080097F /* NewsRepository.swift */,
 			);
 			path = Repository;
+			sourceTree = "<group>";
+		};
+		74FBD39325E5004900BB0E8D /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				74FBD39425E5005A00BB0E8D /* DidSetPublished.swift */,
+			);
+			path = Util;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -218,6 +229,7 @@
 				74068EAD25E264B800AB6203 /* PagingCollectionViewCell.swift in Sources */,
 				74DC47CA25E221A60080097F /* ViewController.swift in Sources */,
 				74DC47F325E25B230080097F /* ApiError.swift in Sources */,
+				74FBD39525E5005A00BB0E8D /* DidSetPublished.swift in Sources */,
 				74DC47E925E2459D0080097F /* NewsCollectionViewCell.swift in Sources */,
 				74DC47C625E221A60080097F /* AppDelegate.swift in Sources */,
 				74DC47E125E2293B0080097F /* NewsRepository.swift in Sources */,
