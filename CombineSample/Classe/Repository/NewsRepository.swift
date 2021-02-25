@@ -13,8 +13,8 @@ struct NewsRepository {
     static func fetchDataFromServer(paging: Paging? = nil) -> Future<(newsList: [News], paging: Paging), ApiError> {
         Future<(newsList: [News], paging: Paging), ApiError> { promise in
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // 20%の確率で通信を失敗させる
-                if Int.random(in: 0..<10) < 2 {
+                // 5%の確率で通信を失敗させる
+                if Int.random(in: 0..<100) < 5 {
                     let error = ApiError(title: "通信に失敗しました",
                                          description: "通信環境の良い場所で再度お試しください")
                     promise(.failure(error))
