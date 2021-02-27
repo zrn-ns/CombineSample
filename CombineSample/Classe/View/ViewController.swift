@@ -77,17 +77,17 @@ class ViewController: UIViewController {
     /// イベントの購読の登録を行う
     private func setupSubscription() {
         // ニュース一覧
-        viewModel.$newsList.removeDuplicates().sink { [weak self] _ in
+        viewModel.$newsList.receive(on: DispatchQueue.main).removeDuplicates().sink { [weak self] _ in
             self?.updateDataSource()
         }.store(in: &cancellables)
 
         // ページングセル
-        viewModel.$needsToShowPagingCell.removeDuplicates().sink { [weak self] _ in
+        viewModel.$needsToShowPagingCell.receive(on: DispatchQueue.main).removeDuplicates().sink { [weak self] _ in
             self?.updateDataSource()
         }.store(in: &cancellables)
 
         // ロード中表示
-        viewModel.$isLoading.removeDuplicates().sink { [weak self] isLoading in
+        viewModel.$isLoading.receive(on: DispatchQueue.main).removeDuplicates().sink { [weak self] isLoading in
             UIApplication.shared.isNetworkActivityIndicatorVisible = isLoading
 
             if !isLoading {
