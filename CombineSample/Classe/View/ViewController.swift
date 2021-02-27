@@ -43,7 +43,7 @@ class ViewController: UIViewController {
         didSet {
             collectionView.delegate = self
             collectionView.dataSource = collectionViewDataSource
-            collectionView.collectionViewLayout = Self.createLayout(collectionViewWidth: collectionView.bounds.width)
+            collectionView.collectionViewLayout = Self.createLayout()
             collectionView.refreshControl = refreshControl
             collectionView.register(UINib(nibName: NewsCellClassName, bundle: nil), forCellWithReuseIdentifier: NewsCellIdentifier)
             collectionView.register(PagingCollectionViewCell.self, forCellWithReuseIdentifier: PagingCellIdentifier)
@@ -60,7 +60,9 @@ class ViewController: UIViewController {
         return control
     }()
 
-    private lazy var collectionViewDataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: Item) -> UICollectionViewCell? in
+    private lazy var collectionViewDataSource: UICollectionViewDiffableDataSource<Section, Item> = .init(collectionView: collectionView) {
+        (collectionView: UICollectionView, indexPath: IndexPath, item: Item) -> UICollectionViewCell? in
+        // 要素に対して、どのようにセルを生成するかを定義する
         switch item {
         case .news(let news):
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewsCellIdentifier, for: indexPath) as! NewsCollectionViewCell
@@ -97,7 +99,7 @@ class ViewController: UIViewController {
     }
 
     /// CollectionViewのLayoutを作成する
-    private static func createLayout(collectionViewWidth: CGFloat) -> UICollectionViewLayout {
+    private static func createLayout() -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                                   heightDimension: .estimated(50))

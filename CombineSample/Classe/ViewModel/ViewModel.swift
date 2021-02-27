@@ -11,7 +11,6 @@ import UIKit
 
 final class ViewModel {
 
-    // Viewから監視可能なプロパティ群
     @Published private(set) var newsList: [News] = []
     @Published private(set) var paging: Paging? = nil {
         didSet {
@@ -20,8 +19,6 @@ final class ViewModel {
     }
     @Published private(set) var isLoading: Bool = false
     @Published private(set) var needsToShowPagingCell: Bool = false
-
-    // ViewのイベントをViewModelに通知するためのメソッド群
 
     func viewDidLoad(vc: UIViewController) {
         router = Router()
