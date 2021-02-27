@@ -16,7 +16,7 @@ private let PagingCellIdentifier = PagingCellClassName
 
 class ViewController: UIViewController {
 
-    enum Section: Int, CaseIterable {
+    enum Section: Int {
         case news
         case paging
     }
